@@ -1,0 +1,2 @@
+mido[ports-rtmidi]
+requests
