@@ -113,7 +113,6 @@ class Color:
 @dataclass(frozen=True)
 class Brightness:
     percent: int
-    label: str | None = None
 
 
 # Home Assistant Configuration
@@ -135,11 +134,11 @@ WARM_COLORS = [
     Color(name="red", rgb=(255, 0, 0)),
 ]
 BRIGHTNESS_PRESETS = [
-    Brightness(percent=20, label="dim"),
+    Brightness(percent=20),
     Brightness(percent=40),
     Brightness(percent=60),
     Brightness(percent=80),
-    Brightness(percent=100, label="full"),
+    Brightness(percent=100),
 ]
 
 
