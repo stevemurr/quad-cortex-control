@@ -7,6 +7,8 @@ and triggers actions based on configured handlers.
 """
 
 import os
+import shutil
+import subprocess
 import sys
 from dataclasses import dataclass, field
 from typing import Callable, Generic, Sequence, TypeVar
@@ -121,6 +123,9 @@ HA_CONFIG = HAConfig(
     url=os.environ.get("HA_URL", ""),
     token=os.environ.get("HA_TOKEN", ""),
 )
+
+# External tools
+NOWPLAYING_CLI = shutil.which("nowplaying-cli")
 
 # Cycle presets
 NATURAL_LIGHT = [
@@ -241,14 +246,28 @@ def ha_set_color_temp(config: HAConfig, entity_id: str, color: Color):
     ha_request(config, "light/turn_on", data, f"Set {entity_id} to {color.name} ({color.kelvin}K)")
 
 
-def build_mappings(config: HAConfig) -> dict[int, Action]:
-    """Build CC mappings with Home Assistant backend."""
-    return {
-        0: simple(lambda: ha_toggle_light(config, "light.lights")),
-        1: cycle(NATURAL_LIGHT, lambda c: ha_set_color_temp(config, "light.lights", c)),
-        2: cycle(WARM_COLORS, lambda c: ha_set_light_color(config, "light.lights", c)),
-        3: cycle(BRIGHTNESS_PRESETS, lambda b: ha_set_brightness(config, "light.lights", b)),
+def run_shell_command(command: str) -> None:
+    """Execute a shell command."""
+    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+    if result.returncode == 0:
+        print(f"  -> Executed: {command}")
+    else:
+        print(f"  -> Command failed: {command}")
+        if result.stderr:
+            print(f"     stderr: {result.stderr.strip()}")
+
+
+def build_mappings(config: HAConfig) -> dict[tuple[int, int], Action]:
+    """Build CC mappings with Home Assistant backend. Keys are (channel, cc)."""
+    mappings: dict[tuple[int, int], Action] = {
+        (0, 0): simple(lambda: ha_toggle_light(config, "light.lights")),
+        (0, 1): cycle(NATURAL_LIGHT, lambda c: ha_set_color_temp(config, "light.lights", c)),
+        (0, 2): cycle(WARM_COLORS, lambda c: ha_set_light_color(config, "light.lights", c)),
+        (0, 3): cycle(BRIGHTNESS_PRESETS, lambda b: ha_set_brightness(config, "light.lights", b)),
     }
+    if NOWPLAYING_CLI:
+        mappings[(0, 9)] = simple(lambda: run_shell_command(f"{NOWPLAYING_CLI} togglePlayPause"))
+    return mappings
 
 
 def list_midi_ports():
@@ -273,16 +292,16 @@ def find_quad_cortex_port(ports):
     return None
 
 
-def handle_message(msg: MidiMessage | UnknownMessage, state: CycleState, mappings: dict[int, Action]) -> None:
+def handle_message(msg: MidiMessage | UnknownMessage, state: CycleState, mappings: dict[tuple[int, int], Action]) -> None:
     """Check message against handlers and trigger actions."""
-    if not isinstance(msg, ControlChange) or msg.channel != 0:
+    if not isinstance(msg, ControlChange):
         return
 
-    if action := mappings.get(msg.control):
+    if action := mappings.get((msg.channel, msg.control)):
         action(state, msg.control)
 
 
-def listen(port_name: str, mappings: dict[int, Action]) -> None:
+def listen(port_name: str, mappings: dict[tuple[int, int], Action]) -> None:
     """Listen for MIDI messages on the specified port."""
     print(f"Listening on: {port_name}")
     print("Press Ctrl+C to stop\n")

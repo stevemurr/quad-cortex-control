@@ -1,0 +1,82 @@
+# MIDI Controller Configuration
+#
+# Environment variables:
+#   HA_URL   - Home Assistant URL (e.g., http://homeassistant.local:8123)
+#   HA_TOKEN - Home Assistant long-lived access token
+
+home_assistant:
+  url: "${HA_URL}"
+  token: "${HA_TOKEN}"
+
+# Device detection - match by substring in port name
+devices:
+  - name: quad_cortex
+    match: "Quad Cortex"
+    enabled: true
+
+# Presets for cycling actions
+presets:
+  natural_light:
+    - { name: "cool daylight", kelvin: 6500 }
+    - { name: "daylight", kelvin: 5500 }
+    - { name: "neutral", kelvin: 4000 }
+    - { name: "warm white", kelvin: 3000 }
+    - { name: "candlelight", kelvin: 2200 }
+
+  warm_colors:
+    - { name: "deep amber", rgb: [255, 100, 0] }
+    - { name: "red", rgb: [255, 0, 0] }
+
+  brightness:
+    - { percent: 20, label: "dim" }
+    - { percent: 40 }
+    - { percent: 60 }
+    - { percent: 80 }
+    - { percent: 100, label: "full" }
+
+# Mappings - device_name: list of mappings
+mappings:
+  # Quad Cortex mappings (matching original midi_listener.py)
+  quad_cortex:
+    # CC 0: Toggle lights
+    - match: { type: control_change, channel: 0, control: 0 }
+      action: ha_toggle
+      params:
+        entity_id: "light.lights"
+
+    # CC 1: Cycle through natural light color temperatures
+    - match: { type: control_change, channel: 0, control: 1 }
+      action: ha_color_temp
+      cycle: true
+      params:
+        entity_id: "light.lights"
+        presets: "$natural_light"
+
+    # CC 2: Cycle through warm colors
+    - match: { type: control_change, channel: 0, control: 2 }
+      action: ha_color
+      cycle: true
+      params:
+        entity_id: "light.lights"
+        presets: "$warm_colors"
+
+    # CC 3: Cycle through brightness levels
+    - match: { type: control_change, channel: 0, control: 3 }
+      action: ha_brightness
+      cycle: true
+      params:
+        entity_id: "light.lights"
+        presets: "$brightness"
+
+    # CC 9: Toggle play/pause (if nowplaying-cli is installed)
+    - match: { type: control_change, channel: 0, control: 9 }
+      action: shell
+      params:
+        command: "nowplaying-cli togglePlayPause"
+
+  # Global mappings apply to all devices
+  # global:
+  #   - match: { type: program_change, program: 127 }
+  #     action: shell
+  #     params:
+  #       command: "say 'Program 127'"
