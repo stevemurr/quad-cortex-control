@@ -44,9 +44,9 @@ cat > "$PLIST_PATH" << EOF
         <string>${PYTHON_PATH}</string>
         <string>-m</string>
         <string>midi_controller</string>
-        <string>menubar</string>
         <string>-c</string>
         <string>${SCRIPT_DIR}/config.yaml</string>
+        <string>menubar</string>
     </array>
     <key>WorkingDirectory</key>
     <string>${SCRIPT_DIR}</string>
@@ -62,6 +62,10 @@ cat > "$PLIST_PATH" << EOF
     <dict>
         <key>PATH</key>
         <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>HA_URL</key>
+        <string>${HA_URL}</string>
+        <key>HA_TOKEN</key>
+        <string>${HA_TOKEN}</string>
     </dict>
 </dict>
 </plist>

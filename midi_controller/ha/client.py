@@ -32,8 +32,11 @@ class HAClient:
 
         try:
             response = requests.post(url, headers=headers, json=data, timeout=5)
+            if not response.ok:
+                print(f"  HA API error: {response.status_code} {response.text[:200]}")
             return response.ok
-        except requests.RequestException:
+        except requests.RequestException as e:
+            print(f"  HA request error: {e}")
             return False
 
     def toggle_light(self, entity_id: str) -> bool:
