@@ -134,6 +134,20 @@ def cmd_list_actions(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_menubar(args: argparse.Namespace) -> int:
+    """Run as a macOS menubar application."""
+    config_path = Path(args.config)
+
+    if not config_path.exists():
+        print(f"Error: Config file not found: {config_path}")
+        print("Run 'python -m midi_controller setup' to create one.")
+        return 1
+
+    from .menubar import run_menubar_app
+    run_menubar_app(config_path)
+    return 0
+
+
 def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(
@@ -163,6 +177,10 @@ def main() -> None:
     # list-actions command
     list_act_parser = subparsers.add_parser("list-actions", help="List available actions")
     list_act_parser.set_defaults(func=cmd_list_actions)
+
+    # menubar command
+    menubar_parser = subparsers.add_parser("menubar", help="Run as macOS menubar app")
+    menubar_parser.set_defaults(func=cmd_menubar)
 
     args = parser.parse_args()
 
