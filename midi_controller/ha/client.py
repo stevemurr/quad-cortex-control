@@ -63,3 +63,7 @@ class HAClient:
     def set_color_temp(self, entity_id: str, kelvin: int) -> bool:
         """Set light color temperature in Kelvin."""
         return self.turn_on_light(entity_id, color_temp_kelvin=kelvin)
+
+    def set_fan_percentage(self, entity_id: str, percentage: int) -> bool:
+        """Set fan speed as a percentage (0-100)."""
+        return self.call_service("fan/set_percentage", {"entity_id": entity_id, "percentage": percentage})

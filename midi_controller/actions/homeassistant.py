@@ -119,3 +119,16 @@ def ha_color_temp(ctx: ActionContext, entity_id: str, presets: list[dict[str, An
         print(f"  -> Set {entity_id} to {name} ({kelvin}K)")
     else:
         print(f"  -> Error setting color temperature on {entity_id}")
+
+
+@action("ha_fan_speed")
+def ha_fan_speed(ctx: ActionContext, entity_id: str, percent: int) -> None:
+    """Set Home Assistant fan speed as a percentage (0-100)."""
+    if ctx.ha is None:
+        print("  -> Error: Home Assistant not configured")
+        return
+
+    if ctx.ha.set_fan_percentage(entity_id, percent):
+        print(f"  -> Set {entity_id} to {percent}%")
+    else:
+        print(f"  -> Error setting fan speed on {entity_id}")
