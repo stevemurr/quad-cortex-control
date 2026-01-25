@@ -40,7 +40,7 @@ class UIEvent:
 class MidiControllerApp(rumps.App):
     """Menubar application for the MIDI controller."""
 
-    def __init__(self, config_path: Path):
+    def __init__(self, config_path: Path, autostart: bool = True):
         super().__init__("MIDI", quit_button=None)
         self.config_path = config_path
 
@@ -62,6 +62,15 @@ class MidiControllerApp(rumps.App):
         # Start polling for UI updates
         self._timer = rumps.Timer(self._poll_events, 0.1)
         self._timer.start()
+
+        # Auto-start if requested
+        if autostart:
+            self._auto_start()
+
+    def _auto_start(self) -> None:
+        """Automatically start the controller after a brief delay."""
+        # Use a timer to start after the app is fully initialized
+        rumps.Timer(lambda _: self.on_start(None), 0.5).start()
 
     def _build_menu(self) -> None:
         """Build the menu structure."""
@@ -267,7 +276,12 @@ class MidiControllerApp(rumps.App):
         rumps.quit_application()
 
 
-def run_menubar_app(config_path: Path) -> None:
-    """Run the menubar application."""
-    app = MidiControllerApp(config_path)
+def run_menubar_app(config_path: Path, autostart: bool = True) -> None:
+    """Run the menubar application.
+
+    Args:
+        config_path: Path to the configuration file.
+        autostart: If True, automatically start the MIDI controller on launch.
+    """
+    app = MidiControllerApp(config_path, autostart=autostart)
     app.run()
