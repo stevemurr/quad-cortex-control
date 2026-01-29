@@ -21,7 +21,7 @@ def cmd_run(args: argparse.Namespace) -> int:
 
     if not config_path.exists():
         print(f"Error: Config file not found: {config_path}")
-        print("Run 'python -m midi_controller setup' to create one.")
+        print("Run 'python -m midi_triggers setup' to create one.")
         return 1
 
     # Load config
@@ -55,7 +55,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         print("Available ports:")
         for port in list_midi_ports():
             print(f"  - {port}")
-        print("\nRun 'python -m midi_controller setup' to configure devices.")
+        print("\nRun 'python -m midi_triggers setup' to configure devices.")
         return 1
 
     # Create message broker
@@ -140,7 +140,7 @@ def cmd_menubar(args: argparse.Namespace) -> int:
 
     if not config_path.exists():
         print(f"Error: Config file not found: {config_path}")
-        print("Run 'python -m midi_controller setup' to create one.")
+        print("Run 'python -m midi_triggers setup' to create one.")
         return 1
 
     from .menubar import run_menubar_app
@@ -151,8 +151,8 @@ def cmd_menubar(args: argparse.Namespace) -> int:
 def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        prog="midi_controller",
-        description="Device-agnostic MIDI controller with config-driven actions",
+        prog="midi_triggers",
+        description="Device-agnostic MIDI trigger system with config-driven actions",
     )
     parser.add_argument(
         "-c", "--config",

@@ -25,11 +25,11 @@ This is a config-driven MIDI control system that routes MIDI messages to actions
 
 | File | Purpose |
 |------|---------|
-| `midi_controller/broker.py` | Central message routing and action dispatch |
-| `midi_controller/config.py` | YAML config loading with env var substitution |
-| `midi_controller/actions/base.py` | Action decorator and ActionContext dataclass |
-| `midi_controller/ha/client.py` | Home Assistant REST API client |
-| `midi_controller/cycle.py` | Preset cycling state management |
+| `midi_triggers/broker.py` | Central message routing and action dispatch |
+| `midi_triggers/config.py` | YAML config loading with env var substitution |
+| `midi_triggers/actions/base.py` | Action decorator and ActionContext dataclass |
+| `midi_triggers/ha/client.py` | Home Assistant REST API client |
+| `midi_triggers/cycle.py` | Preset cycling state management |
 
 ## Code Style
 
@@ -43,7 +43,7 @@ This is a config-driven MIDI control system that routes MIDI messages to actions
 
 ### Adding a new built-in action
 
-1. Add function in `midi_controller/actions/homeassistant.py` or `shell.py`
+1. Add function in `midi_triggers/actions/homeassistant.py` or `shell.py`
 2. Decorate with `@action("action_name")`
 3. First param must be `ctx: ActionContext`
 4. Additional params come from config `params`
@@ -56,13 +56,13 @@ def new_action(ctx: ActionContext, entity_id: str, value: int = 100):
 
 ### Adding a new MIDI message type
 
-1. Add dataclass in `midi_controller/messages.py`
+1. Add dataclass in `midi_triggers/messages.py`
 2. Update `parse_message()` function
 3. Add match handling in `broker.py`
 
 ### Modifying config structure
 
-1. Update schema in `midi_controller/config.py`
+1. Update schema in `midi_triggers/config.py`
 2. Update `_load_mappings()` or relevant loader function
 3. Update `config.yaml` example
 
@@ -77,13 +77,13 @@ def new_action(ctx: ActionContext, entity_id: str, value: int = 100):
 
 ```bash
 # Standard run
-python -m midi_controller run
+python -m midi_triggers run
 
 # Debug with verbose output
-python -m midi_controller run  # (add logging if needed)
+python -m midi_triggers run  # (add logging if needed)
 
 # List devices to verify MIDI connection
-python -m midi_controller list-devices
+python -m midi_triggers list-devices
 ```
 
 ## Environment Variables

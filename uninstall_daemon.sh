@@ -1,9 +1,9 @@
 #!/bin/bash
-# Uninstall MIDI Controller daemon (LaunchAgent)
+# Uninstall MIDI Triggers daemon (LaunchAgent)
 
 set -e
 
-PLIST_NAME="com.midi-controller.agent"
+PLIST_NAME="com.midi-triggers.agent"
 PLIST_PATH="$HOME/Library/LaunchAgents/${PLIST_NAME}.plist"
 
 if [ ! -f "$PLIST_PATH" ]; then
@@ -17,4 +17,4 @@ launchctl unload "$PLIST_PATH" 2>/dev/null || true
 echo "Removing plist..."
 rm "$PLIST_PATH"
 
-echo "MIDI Controller daemon uninstalled."
+echo "MIDI Triggers daemon uninstalled."

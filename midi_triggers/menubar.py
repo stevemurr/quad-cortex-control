@@ -1,5 +1,5 @@
 """
-macOS menubar application for the MIDI controller.
+macOS menubar application for MIDI Triggers.
 
 Runs the MIDI listener as a background service with a system tray icon.
 """
@@ -37,8 +37,8 @@ class UIEvent:
     data: Any = None
 
 
-class MidiControllerApp(rumps.App):
-    """Menubar application for the MIDI controller."""
+class MidiTriggersApp(rumps.App):
+    """Menubar application for MIDI Triggers."""
 
     def __init__(self, config_path: Path, autostart: bool = True):
         super().__init__("MIDI", quit_button=None)
@@ -129,7 +129,7 @@ class MidiControllerApp(rumps.App):
                 self._update_devices_menu()
         elif event.type == EventType.ERROR:
             rumps.notification(
-                title="MIDI Controller Error",
+                title="MIDI Triggers Error",
                 subtitle="",
                 message=str(event.data),
             )
@@ -283,5 +283,5 @@ def run_menubar_app(config_path: Path, autostart: bool = True) -> None:
         config_path: Path to the configuration file.
         autostart: If True, automatically start the MIDI controller on launch.
     """
-    app = MidiControllerApp(config_path, autostart=autostart)
+    app = MidiTriggersApp(config_path, autostart=autostart)
     app.run()

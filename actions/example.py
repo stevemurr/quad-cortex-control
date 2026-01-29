@@ -5,7 +5,7 @@ This file demonstrates how to create custom actions.
 Drop .py files in this folder and they'll be auto-discovered.
 """
 
-from midi_controller.actions import ActionContext, action
+from midi_triggers.actions import ActionContext, action
 
 
 @action("print_message")

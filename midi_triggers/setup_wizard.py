@@ -330,7 +330,7 @@ def run_setup_wizard(config_path: Path) -> int:
         Exit code (0 for success).
     """
     print("=" * 60)
-    print("MIDI Controller Setup Wizard")
+    print("MIDI Triggers Setup Wizard")
     print("=" * 60)
     print()
 
@@ -442,7 +442,7 @@ def run_setup_wizard(config_path: Path) -> int:
     print("Next steps:")
     print(f"  1. Edit {config_path} to customize entity IDs and actions")
     print("  2. Set HA_URL and HA_TOKEN environment variables")
-    print("  3. Run: python -m midi_controller run")
+    print("  3. Run: python -m midi_triggers run")
     print()
 
     return 0

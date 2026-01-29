@@ -1,6 +1,6 @@
-# Quad Cortex MIDI Control
+# MIDI Triggers
 
-A device-agnostic, config-driven MIDI control system that routes MIDI messages from input devices to configurable actions. Designed primarily for integrating MIDI controllers (like the Neural DSP Quad Cortex and nanoKEY2) with Home Assistant for smart home automation.
+A device-agnostic, config-driven MIDI trigger system that routes MIDI messages from input devices to configurable actions. Designed for integrating any MIDI controller with Home Assistant for smart home automation, shell commands, and custom actions.
 
 ## Features
 
@@ -35,34 +35,34 @@ pip install -r requirements.txt
 
 2. Run the interactive setup wizard:
    ```bash
-   python -m midi_controller setup
+   python -m midi_triggers setup
    ```
 
 3. Start the controller:
    ```bash
-   python -m midi_controller run
+   python -m midi_triggers run
    ```
 
 ## Usage
 
 ```bash
 # Run MIDI controller
-python -m midi_controller run
+python -m midi_triggers run
 
 # Interactive setup wizard
-python -m midi_controller setup
+python -m midi_triggers setup
 
 # List available MIDI devices
-python -m midi_controller list-devices
+python -m midi_triggers list-devices
 
 # List available actions
-python -m midi_controller list-actions
+python -m midi_triggers list-actions
 
 # Run as macOS menubar app
-python -m midi_controller menubar
+python -m midi_triggers menubar
 
 # Use custom config file
-python -m midi_controller -c /path/to/config.yaml run
+python -m midi_triggers -c /path/to/config.yaml run
 ```
 
 ## Configuration
@@ -147,7 +147,7 @@ Create custom actions in the `actions/` directory:
 
 ```python
 # actions/my_action.py
-from midi_controller.actions.base import action, ActionContext
+from midi_triggers.actions.base import action, ActionContext
 
 @action("my_custom_action")
 def my_action(ctx: ActionContext, message: str = "Hello"):
@@ -164,12 +164,12 @@ Actions are auto-discovered at startup. The `ActionContext` provides:
 ## Project Structure
 
 ```
-quad_cortex_control/
+midi-triggers/
 ├── main.py                 # Entry point
 ├── config.yaml             # Configuration
 ├── requirements.txt        # Dependencies
 ├── actions/                # Custom action plugins
-└── midi_controller/        # Main package
+└── midi_triggers/          # Main package
     ├── cli.py              # Command-line interface
     ├── config.py           # Config loading
     ├── devices.py          # MIDI device management

@@ -1,5 +1,5 @@
 """
-Entry point for running as a module: python -m midi_controller
+Entry point for running as a module: python -m midi_triggers
 """
 
 from .cli import main

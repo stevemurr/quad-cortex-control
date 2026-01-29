@@ -1,11 +1,11 @@
 #!/bin/bash
-# Install MIDI Controller as a macOS daemon (LaunchAgent)
+# Install MIDI Triggers as a macOS daemon (LaunchAgent)
 # This runs the menubar app at login without requiring a terminal
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PLIST_NAME="com.midi-controller.agent"
+PLIST_NAME="com.midi-triggers.agent"
 PLIST_PATH="$HOME/Library/LaunchAgents/${PLIST_NAME}.plist"
 
 # Check for virtual environment
@@ -21,7 +21,7 @@ fi
 # Check for config file
 if [ ! -f "$SCRIPT_DIR/config.yaml" ]; then
     echo "Error: config.yaml not found in $SCRIPT_DIR"
-    echo "Run 'python -m midi_controller setup' first to create a configuration."
+    echo "Run 'python -m midi_triggers setup' first to create a configuration."
     exit 1
 fi
 
@@ -43,7 +43,7 @@ cat > "$PLIST_PATH" << EOF
     <array>
         <string>${PYTHON_PATH}</string>
         <string>-m</string>
-        <string>midi_controller</string>
+        <string>midi_triggers</string>
         <string>-c</string>
         <string>${SCRIPT_DIR}/config.yaml</string>
         <string>menubar</string>
@@ -55,9 +55,9 @@ cat > "$PLIST_PATH" << EOF
     <key>KeepAlive</key>
     <false/>
     <key>StandardOutPath</key>
-    <string>${HOME}/Library/Logs/midi-controller.log</string>
+    <string>${HOME}/Library/Logs/midi-triggers.log</string>
     <key>StandardErrorPath</key>
-    <string>${HOME}/Library/Logs/midi-controller.log</string>
+    <string>${HOME}/Library/Logs/midi-triggers.log</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
@@ -75,9 +75,9 @@ echo "Created LaunchAgent at: $PLIST_PATH"
 
 # Load the service
 launchctl load "$PLIST_PATH"
-echo "Service loaded. MIDI Controller will start at login."
+echo "Service loaded. MIDI Triggers will start at login."
 echo ""
 echo "To start now:     launchctl start $PLIST_NAME"
 echo "To stop:          launchctl stop $PLIST_NAME"
 echo "To uninstall:     launchctl unload $PLIST_PATH && rm $PLIST_PATH"
-echo "Logs at:          ~/Library/Logs/midi-controller.log"
+echo "Logs at:          ~/Library/Logs/midi-triggers.log"
