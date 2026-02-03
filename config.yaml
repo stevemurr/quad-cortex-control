@@ -107,10 +107,22 @@ mappings:
         type: note_on
         note: 50
       action: ha_brightness
-      cycle: true
       params:
         entity_id: light.lights
-        presets: $brightness
+        percent: 25
+    - match:
+        type: note_on
+        note: 52
+      action: ha_brightness
+      params:
+        entity_id: light.lights
+        percent: 100
+    - match:
+        type: note_on
+        note: 53
+      action: ha_toggle
+      params:
+        entity_id: fan.blue_pure_fan
     - match:
         type: note_on
         note: 54
@@ -118,6 +130,12 @@ mappings:
       params:
         entity_id: fan.blue_pure_fan
         percent: 33
+    - match:
+        type: note_on
+        note: 55
+      action: shell
+      params:
+        command: shortcuts run "Red Light"
     - match:
         type: note_on
         note: 56
