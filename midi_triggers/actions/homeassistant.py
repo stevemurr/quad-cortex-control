@@ -9,42 +9,60 @@ from .base import ActionContext, action
 
 @action("ha_toggle")
 def ha_toggle(ctx: ActionContext, entity_id: str) -> None:
-    """Toggle a Home Assistant light."""
+    """Toggle a Home Assistant entity (light or fan)."""
     if ctx.ha is None:
         print("  -> Error: Home Assistant not configured")
         return
 
-    if ctx.ha.toggle_light(entity_id):
+    # Determine entity domain and call appropriate toggle
+    domain = entity_id.split(".")[0] if "." in entity_id else "light"
+
+    if domain == "fan":
+        success = ctx.ha.toggle_fan(entity_id)
+    else:
+        success = ctx.ha.toggle_light(entity_id)
+
+    if success:
         print(f"  -> Toggled {entity_id}")
     else:
         print(f"  -> Error toggling {entity_id}")
 
 
 @action("ha_brightness")
-def ha_brightness(ctx: ActionContext, entity_id: str, presets: list[dict[str, Any]] | None = None) -> None:
+def ha_brightness(
+    ctx: ActionContext,
+    entity_id: str,
+    presets: list[dict[str, Any]] | None = None,
+    percent: int | None = None,
+) -> None:
     """
     Set Home Assistant light brightness.
 
     When cycling, uses preset_value from context.
+    Can also accept a direct percent value.
     Otherwise, uses first preset if available.
     """
     if ctx.ha is None:
         print("  -> Error: Home Assistant not configured")
         return
 
-    # Get brightness value
-    if ctx.preset_value is not None:
+    # Get brightness value - direct percent takes priority
+    if percent is not None:
+        brightness = percent
+        label = f"{percent}%"
+    elif ctx.preset_value is not None:
         preset = ctx.preset_value
+        brightness = preset.get("percent", 100)
+        label = preset.get("label", f"{brightness}%")
     elif presets:
         preset = presets[0]
+        brightness = preset.get("percent", 100)
+        label = preset.get("label", f"{brightness}%")
     else:
         print("  -> Error: No brightness preset provided")
         return
 
-    percent = preset.get("percent", 100)
-    label = preset.get("label", f"{percent}%")
-
-    if ctx.ha.set_brightness(entity_id, percent):
+    if ctx.ha.set_brightness(entity_id, brightness):
         print(f"  -> Set {entity_id} to {label} brightness")
     else:
         print(f"  -> Error setting brightness on {entity_id}")

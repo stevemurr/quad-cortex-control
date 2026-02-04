@@ -70,3 +70,7 @@ class HAClient:
     def set_fan_percentage(self, entity_id: str, percentage: int) -> bool:
         """Set fan speed as a percentage (0-100)."""
         return self.call_service("fan/set_percentage", {"entity_id": entity_id, "percentage": percentage})
+
+    def toggle_fan(self, entity_id: str) -> bool:
+        """Toggle a fan entity."""
+        return self.call_service("fan/toggle", {"entity_id": entity_id})
